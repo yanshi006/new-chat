@@ -5,8 +5,8 @@ const AnswersList = (props) => {
   return (
     <div className='c-grid__answer'>
       {/* props.answersはApp.jsxから受け取った配列（Answers） */}
-      {props.answers.map((value, index) => {
-        return <Answer key={index.toString()} content={value.content} />
+      {props.answers.map((answer, index) => {
+        return <Answer key={index.toString()} nextId={answer.nextId} content={answer.content} select={props.select} />
       })}
     </div>
   )
