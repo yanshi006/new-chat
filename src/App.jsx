@@ -38,8 +38,20 @@ export default class App extends React.Component {
     switch (true) {
       case (nextQuestionId === 'init'):
         //displayNextQuestion関数を実行している
-        this.displayNextQuestion(nextQuestionId)
+        setTimeout(() => {
+          this.displayNextQuestion(nextQuestionId)
+        }, 500);
         break;
+        //正規表現で調べる
+        //^は文字列の先頭を指定する。
+        //*はその後はなんでもいいよみたいなやつ
+        //nextQuestionIdの中で、正規表現で調べた値の場合
+        case (/^https:*/.test(nextQuestionId)):
+          const a = document.createElement('a');
+          a.href = nextQuestionId;
+          a.target = '_blank';
+          a.click();
+          break;
       default:
         //現在(初期値)のchatsの値
         const chats = this.state.chats;
@@ -54,7 +66,9 @@ export default class App extends React.Component {
         });
 
         //
-        this.displayNextQuestion(nextQuestionId);
+        setTimeout(() => {
+          this.displayNextQuestion(nextQuestionId);
+        }, 1000);
         break;
     }
   }
@@ -92,6 +106,15 @@ export default class App extends React.Component {
   componentDidMount() {
     const initAnswer = '';
     this.selectAnswer(initAnswer, this.state.currentId);
+  }
+  
+  //ライフサイクル（副作用）。初回のレンダーが終わり、その後何かstateが更新されたら、必ずcomponentDidUpdateが呼び出される。自動にスクロールをしてくれる機能
+  componentDidUpdate() {
+    const scrollArea = document.getElementById('scroll-area');
+    if (scrollArea) {
+      //この書き方をすると、自動的にスクロールされる
+      scrollArea.scrollTop = scrollArea.scrollHeight
+    };
   }
 
   render() {
