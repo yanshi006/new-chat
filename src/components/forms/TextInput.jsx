@@ -3,6 +3,7 @@ import TextField from '@material-ui/core/TextField';
 
 const TextInput = (props) => {
   return (
+    //material-uiのテキストフィールド
     <TextField
       fullWidth={true}
       margin={'dense'}
@@ -14,7 +15,6 @@ const TextInput = (props) => {
       type={props.type}
       label={props.label}
       onChange={props.onChange}
-      error={props.error}
     />
   )
 }

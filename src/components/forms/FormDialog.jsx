@@ -13,42 +13,73 @@ export default class FormDialog extends Component {
     this.state = {
       name: '',
       email: '',
-      description: '',
-      error: ''
+      description: ''
     }
     this.inputName = this.inputName.bind(this);
     this.inputEmail = this.inputEmail.bind(this);
     this.inputDescription = this.inputDescription.bind(this);
     this.submitForm = this.submitForm.bind(this);
-    this.handleSubmit = this.handleSubmit.bind(this);
   }
 
+  //入力された名前を取っている
   inputName = (e) => {
-    this.setState({name: e.target.value})
+    this.setState({ name: e.target.value })
   }
+
+    //入力されたメールアドレスを取っている
   inputEmail = (e) => {
-    this.setState({email: e.target.value})
+    this.setState({ email: e.target.value })
   }
+
+    //入力されたお問い合わせ内容を取っている
   inputDescription = (e) => {
-    this.setState({description: e.target.value})
+    this.setState({ description: e.target.value })
   }
+  //送信する内容
   submitForm = () => {
     const name = this.state.name;
     const email = this.state.email;
     const description = this.state.description;
 
-  }
-  handleSubmit = () => {
-    if (this.state.name.trim() === '') {
-      this.setState({error: 'お名前を入力してください。'})
-    } else if (this.state.email.trim() === '') {
-      this.setState({error: 'メールアドレスを入力してください。'})
-    } else if (this.state.description.trim() === '') {
-      this.setState({error: 'お問い合わせ内容を入力してください。'})
+    //送信する値
+    const payload = {
+      text: 'お問い合わせがありました\n' +
+        'お名前：' + name + '\n' +
+        'メールアドレス：' + email + '\n' +
+        'お問い合わせ内容：\n' + description + '\n'
     }
+    //Incoming WebHooksのurlどこのチャンネルに送信するのか
+    const url = '';
+
+    fetch(url, {
+      method: 'POST',
+      body: JSON.stringify(payload)
+    }).then(() => {
+      alert('送信が完了しました。');
+      //フォームの値をリセットしている
+      this.setState({
+        name: '',
+        email: '',
+        description: '',
+      })
+      //フォームを閉じている
+      return this.props.handleClose();
+    })
   }
+
+  // handleSubmit = () => {
+  //   if (this.state.name.trim() === '') {
+  //     this.setState({ error: 'お名前を入力してください。' })
+  //   } else if (this.state.email.trim() === '') {
+  //     this.setState({ error: 'メールアドレスを入力してください。' })
+  //   } else if (this.state.description.trim() === '') {
+  //     this.setState({ error: 'お問い合わせ内容を入力してください。' })
+  //   }
+  // }
+
   render() {
     return (
+      //material-uiのダイアログ
       <Dialog
         open={this.props.open}
         onClose={this.props.handleClose}
@@ -56,14 +87,13 @@ export default class FormDialog extends Component {
         aria-describedby="alert-dialog-description"
       >
         <DialogTitle id="alert-dialog-title">お問い合わせフォーム</DialogTitle>
-        <DialogContent onSubmit={this.handleSubmit}>
+        <DialogContent>
           <TextInput
             multiline={false}
             rows={1}
             value={this.state.name}
             type='name'
             label='お名前(必須)'
-            error={this.state.error}
             onChange={this.inputName}
           />
           <TextInput
@@ -72,7 +102,6 @@ export default class FormDialog extends Component {
             value={this.state.email}
             type='email'
             label='メールアドレス(必須)'
-            error={this.state.error}
             onChange={this.inputEmail}
           />
           <TextInput
@@ -81,7 +110,6 @@ export default class FormDialog extends Component {
             value={this.state.description}
             type='text'
             label='お問い合わせ内容(必須)'
-            error={this.state.error}
             onChange={this.inputDescription}
           />
         </DialogContent>

@@ -72,7 +72,7 @@ export default class App extends React.Component {
           chats: chats
         });
 
-        //
+        //1秒遅れて返信を返している
         setTimeout(() => {
           this.displayNextQuestion(nextQuestionId);
         }, 1000);
@@ -80,10 +80,12 @@ export default class App extends React.Component {
     }
   }
 
+  //ダイアログを開く関数
   handleClickOpen = () => {
     this.setState({ open: true });
   };
 
+  //ダイアログを閉じる関数
   handleClose = () => {
     this.setState({ open: false });
   };
