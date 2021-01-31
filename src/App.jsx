@@ -2,6 +2,7 @@ import React from "react";
 import defaultDataset from "./dataset";
 import './assets/styles/style.css';
 import { AnswersList, Chats } from "./components/index";
+import FormDialog from "./components/forms/FormDialog";
 
 export default class App extends React.Component {
   constructor(props) {
@@ -14,6 +15,8 @@ export default class App extends React.Component {
       open: false
     }
     this.selectAnswer = this.selectAnswer.bind(this);
+    this.handleClickOpen = this.handleClickOpen.bind(this);
+    this.handleClose = this.handleClose.bind(this);
   }
 
   //この関数は、質問をChatに追加している
@@ -42,16 +45,20 @@ export default class App extends React.Component {
           this.displayNextQuestion(nextQuestionId)
         }, 500);
         break;
-        //正規表現で調べる
-        //^は文字列の先頭を指定する。
-        //*はその後はなんでもいいよみたいなやつ
-        //nextQuestionIdの中で、正規表現で調べた値の場合
-        case (/^https:*/.test(nextQuestionId)):
-          const a = document.createElement('a');
-          a.href = nextQuestionId;
-          a.target = '_blank';
-          a.click();
+        case (nextQuestionId === 'contact'):
+          // this.setState({open: true});
+          this.handleClickOpen();
           break;
+      //正規表現で調べる
+      //^は文字列の先頭を指定する。
+      //*はその後はなんでもいいよみたいなやつ
+      //nextQuestionIdの中で、正規表現で調べた値の場合
+      case (/^https:*/.test(nextQuestionId)):
+        const a = document.createElement('a');
+        a.href = nextQuestionId;
+        a.target = '_blank';
+        a.click();
+        break;
       default:
         //現在(初期値)のchatsの値
         const chats = this.state.chats;
@@ -73,41 +80,21 @@ export default class App extends React.Component {
     }
   }
 
-  //answersにdatasetから初期値の値(init)を入れ込む関数
-  // initAnswer = () => {
-  //   //初期状態はinitが入る
-  //   const initDataset = this.state.detaset[this.state.currentId];
-  //   const initAnswers = initDataset.answers;
-  //   this.setState({
-  //     answers: initAnswers
-  //   });
-  // }
+  handleClickOpen = () => {
+    this.setState({ open: true });
+  };
 
-  //chatsにdatasetから初期値の値(init)を入れ込む関数
-  // initChats = () => {
-  //   const initData = this.state.detaset[this.state.currentId];
-  //datasetからquestionの値を取り出している
-  // const chat = {
-  //   text: initData.question,
-  //   type: 'question'
-  // };
+  handleClose = () => {
+    this.setState({ open: false });
+  };
 
-  // //現在のchatsの値
-  // const chats = this.state.chats;
-  // //現在(初期値)のchats(配列)にdatasetのquestionをpushしている
-  // chats.push(chat)
-  // //現在(初期値)のchatsの値にpushした配列に書き変えている
-  // this.setState({
-  //   chats: chats
-  // });
-  // }
 
   //ライフサイクル（副作用）。初回のレンダーが終わった後にselectAnswer関数を実行する。
   componentDidMount() {
     const initAnswer = '';
     this.selectAnswer(initAnswer, this.state.currentId);
   }
-  
+
   //ライフサイクル（副作用）。初回のレンダーが終わり、その後何かstateが更新されたら、必ずcomponentDidUpdateが呼び出される。自動にスクロールをしてくれる機能
   componentDidUpdate() {
     const scrollArea = document.getElementById('scroll-area');
@@ -123,6 +110,7 @@ export default class App extends React.Component {
         <div className='c-box'>
           <Chats chats={this.state.chats} />
           <AnswersList answers={this.state.answers} select={this.selectAnswer} />
+          <FormDialog open={this.state.open} handleClose={this.handleClose} />
         </div>
       </section>
     );
