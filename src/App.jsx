@@ -1,54 +1,43 @@
-import React from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import defaultDataset from "./dataset";
 import './assets/styles/style.css';
 import { AnswersList, Chats } from "./components/index";
 import FormDialog from "./components/forms/FormDialog";
 
-export default class App extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      answers: [],
-      chats: [],
-      currentId: 'init',
-      detaset: defaultDataset,
-      open: false
-    }
-    this.selectAnswer = this.selectAnswer.bind(this);
-    this.handleClickOpen = this.handleClickOpen.bind(this);
-    this.handleClose = this.handleClose.bind(this);
-  }
+const App = () => {
+  const [answers, setAnswers] = useState([]);
+  const [chats, setChats] = useState([]);
+  const [currentId, setCurrentId] = useState('init');
+  const [open, setOpen] = useState(false);
+  const detaset = defaultDataset;
 
   //この関数は、質問をChatに追加している
   //nextQuestionId(defaultDatasetのinitなど = defaultDatasetのanswersの中のnextId)を引数に取る
-  displayNextQuestion = (nextQuestionId) => {
+  const displayNextQuestion = (nextQuestionId) => {
     //現在(初期値)のchatsの値
-    const chats = this.state.chats;
-    chats.push({
-      text: this.state.detaset[nextQuestionId].question,
+    addChats({
+      text: detaset[nextQuestionId].question,
       type: 'question'
-    })
-    this.setState({
-      answers: this.state.detaset[nextQuestionId].answers,
-      chats: chats,
-      currentId: nextQuestionId
     });
+    setAnswers(detaset[nextQuestionId].answers);
+    // setChats(chats1);
+    setCurrentId(nextQuestionId);
   }
 
   //この関数は、回答をChatに追加している
   //selectedAnswer(選択された回答{文字列})、nextQuestionId(defaultDatasetのinitなど)を引数に取る
-  selectAnswer = (selectedAnswer, nextQuestionId) => {
+  const selectAnswer = (selectedAnswer, nextQuestionId) => {
     switch (true) {
       case (nextQuestionId === 'init'):
         //displayNextQuestion関数を実行している
         setTimeout(() => {
-          this.displayNextQuestion(nextQuestionId)
+          displayNextQuestion(nextQuestionId)
         }, 500);
         break;
-        case (nextQuestionId === 'contact'):
-          // this.setState({open: true});
-          this.handleClickOpen();
-          break;
+      case (nextQuestionId === 'contact'):
+        // this.setState({open: true});
+        handleClickOpen();
+        break;
       //正規表現で調べる
       //^は文字列の先頭を指定する。
       //*はその後はなんでもいいよみたいなやつ
@@ -61,60 +50,66 @@ export default class App extends React.Component {
         break;
       default:
         //現在(初期値)のchatsの値
-        const chats = this.state.chats;
+        // const chats2 = chats;
         //現在(初期値)のchats(空の配列)にdetasetのanswersをpushしている
-        chats.push({
+        addChats({
           text: selectedAnswer,
           type: 'answer'
         });
         //現在(初期値)のchatsの値をpushした配列に書き変えている
-        this.setState({
-          chats: chats
-        });
+        // setChats(chats2)
 
         //1秒遅れて返信を返している
         setTimeout(() => {
-          this.displayNextQuestion(nextQuestionId);
+          displayNextQuestion(nextQuestionId);
         }, 1000);
         break;
     }
   }
+  //引数のchatは受け取るオブジェクト
+  //setChatsの引数は前のstate(chatsの状態)を受け取ることができる
+  //returnで前のstate(chats)を展開し、新しく受け取ったオブジェクトを入れている
+  const addChats = (chat) => {
+    setChats((prevChats) => {
+      return [...prevChats, chat]
+    })
+  }
 
   //ダイアログを開く関数
-  handleClickOpen = () => {
-    this.setState({ open: true });
+  const handleClickOpen = () => {
+    setOpen(true)
   };
 
   //ダイアログを閉じる関数
-  handleClose = () => {
-    this.setState({ open: false });
-  };
+  const handleClose = useCallback(() => {
+    setOpen(false);
+  }, [setOpen])
 
 
   //ライフサイクル（副作用）。初回のレンダーが終わった後にselectAnswer関数を実行する。
-  componentDidMount() {
+  useEffect(() => {
     const initAnswer = '';
-    this.selectAnswer(initAnswer, this.state.currentId);
-  }
+    selectAnswer(initAnswer, currentId);
+  }, []);
 
   //ライフサイクル（副作用）。初回のレンダーが終わり、その後何かstateが更新されたら、必ずcomponentDidUpdateが呼び出される。自動にスクロールをしてくれる機能
-  componentDidUpdate() {
+  useEffect(() => {
     const scrollArea = document.getElementById('scroll-area');
     if (scrollArea) {
       //この書き方をすると、自動的にスクロールされる
       scrollArea.scrollTop = scrollArea.scrollHeight
     };
-  }
+  });
 
-  render() {
-    return (
-      <section className='c-section'>
-        <div className='c-box'>
-          <Chats chats={this.state.chats} />
-          <AnswersList answers={this.state.answers} select={this.selectAnswer} />
-          <FormDialog open={this.state.open} handleClose={this.handleClose} />
-        </div>
-      </section>
-    );
-  }
+  return (
+    <section className='c-section'>
+      <div className='c-box'>
+        <Chats chats={chats} />
+        <AnswersList answers={answers} select={selectAnswer} />
+        <FormDialog open={open} handleClose={handleClose} />
+      </div>
+    </section>
+  );
 }
+
+export default App

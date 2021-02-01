@@ -6,9 +6,9 @@ import Koko from '../assets/img/koko.jpg';
 import Maru from '../assets/img/maru.JPG';
 
 
-const Chat = (props) => {
+const Chat = ({ text, type }) => {
   //props.typeがquestionであったら、isQuestionに真偽値が入る。
-  const isQuestion = (props.type === 'question');
+  const isQuestion = (type === 'question');
 
   const classes = isQuestion ? 'p-chat__row' : 'p-chat__reverse';
 
@@ -22,7 +22,7 @@ const Chat = (props) => {
           )}
       </ListItemAvatar>
       <div className="p-chat__bubble">
-        {props.text}
+        {text}
       </div>
     </ListItem>
   )

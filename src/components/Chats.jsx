@@ -13,12 +13,12 @@ const useStyles = makeStyles(() => (
   })
 ));
 
-const Chats = (props) => {
+const Chats = ({ chats }) => {
   const classes = useStyles();
 
   return (
     <List className={classes.chats} id='scroll-area'>
-      {props.chats.map((chat, index) => {
+      {chats.map((chat, index) => {
         return <Chat key={index.toString()} text={chat.text} type={chat.type} />
       })}
     </List>
