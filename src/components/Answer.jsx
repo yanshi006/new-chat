@@ -17,13 +17,13 @@ const useStyles = makeStyles(() => (
   })
 ));
 
-const Answer = (props) => {
+const Answer = ({ nextId, content, select }) => {
   const classes = useStyles();
 
   return (
-     <Button className={classes.button} variant="outlined" onClick={() => props.select(props.content, props.nextId)}>
-       {props.content}
-     </Button>
+    <Button className={classes.button} variant="outlined" onClick={() => select(content, nextId)}>
+      {content}
+    </Button>
   )
 }
 

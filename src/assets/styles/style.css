@@ -23,6 +23,7 @@
 
 .c-grid__answer {
   display: flex;
+  /* flex-direction: column; */
   flex-flow: column;
   justify-content: flex-end;
   height: 192px;

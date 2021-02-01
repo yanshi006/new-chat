@@ -1,4 +1,4 @@
-import React, { Component, useState } from 'react';
+import React, { useState } from 'react';
 import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
@@ -52,7 +52,7 @@ const FormDialog = ({ open, handleClose }) => {
       setEmail('');
       setdDescription('');
       //フォームを閉じている
-      return (handleClose());
+      return handleClose();
     })
   }
 

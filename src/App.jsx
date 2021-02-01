@@ -14,13 +14,11 @@ const App = () => {
   //この関数は、質問をChatに追加している
   //nextQuestionId(defaultDatasetのinitなど = defaultDatasetのanswersの中のnextId)を引数に取る
   const displayNextQuestion = (nextQuestionId) => {
-    //現在(初期値)のchatsの値
     addChats({
       text: detaset[nextQuestionId].question,
       type: 'question'
     });
     setAnswers(detaset[nextQuestionId].answers);
-    // setChats(chats1);
     setCurrentId(nextQuestionId);
   }
 
@@ -31,11 +29,12 @@ const App = () => {
       case (nextQuestionId === 'init'):
         //displayNextQuestion関数を実行している
         setTimeout(() => {
+          //initの場合だから引数が'init'でも大丈夫だった。
+          //初めはuseEffectによって、stateのcurrentIdが入れられている
           displayNextQuestion(nextQuestionId)
         }, 500);
         break;
       case (nextQuestionId === 'contact'):
-        // this.setState({open: true});
         handleClickOpen();
         break;
       //正規表現で調べる
@@ -49,16 +48,10 @@ const App = () => {
         a.click();
         break;
       default:
-        //現在(初期値)のchatsの値
-        // const chats2 = chats;
-        //現在(初期値)のchats(空の配列)にdetasetのanswersをpushしている
         addChats({
           text: selectedAnswer,
           type: 'answer'
         });
-        //現在(初期値)のchatsの値をpushした配列に書き変えている
-        // setChats(chats2)
-
         //1秒遅れて返信を返している
         setTimeout(() => {
           displayNextQuestion(nextQuestionId);
@@ -87,9 +80,10 @@ const App = () => {
 
 
   //ライフサイクル（副作用）。初回のレンダーが終わった後にselectAnswer関数を実行する。
+  //外部(useEffectの外)の関数や値を使っているからエラーが出ている。依存関係
   useEffect(() => {
-    const initAnswer = '';
-    selectAnswer(initAnswer, currentId);
+      const initAnswer = '';
+      selectAnswer(initAnswer, currentId);
   }, []);
 
   //ライフサイクル（副作用）。初回のレンダーが終わり、その後何かstateが更新されたら、必ずcomponentDidUpdateが呼び出される。自動にスクロールをしてくれる機能
